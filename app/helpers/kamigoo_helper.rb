@@ -1,0 +1,2 @@
+module KamigooHelper
+end

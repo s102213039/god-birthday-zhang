@@ -37,4 +37,5 @@ class PushMessagesController < ApplicationController
       config.channel_token = ENV['CHANNEL_TOKEN']
     }
   end
+  
 end

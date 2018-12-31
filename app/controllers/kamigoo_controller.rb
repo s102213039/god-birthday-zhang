@@ -2,60 +2,65 @@
 require 'line/bot'
 require 'json'
 class KamigooController < ApplicationController
+  skip_before_action :verify_authenticity_token, raise: false
   protect_from_forgery with: :null_session
+  before_action :verify_header, only: :webhook
   
   def webhook
-    # 查氣溫
-    reply_temperature = get_temperature(received_text)
+    if check_received_text == "text"
+      # 查氣溫
+      reply_temperature = get_temperature(received_text)
     
-    unless reply_temperature.nil?
-       # 傳送訊息到 line
-      response = reply_to_line(reply_temperature)
+      unless reply_temperature.nil?
+         # 傳送訊息到 line
+        response = reply_to_line(reply_temperature)
       
-      # 回應200
-      head :ok
+        # 回應200
+        head :ok
       
-      return
-    end
+        return
+      end
     
-    # 查天氣
-    reply_image = get_weather(received_text)
+      # 查天氣
+      reply_image = get_weather(received_text)
     
-    #有查到的話 後面的事情就不作了
-    unless reply_image.nil?
-      # 傳送訊息到 line
-      response = reply_image_to_line(reply_image)
+      #有查到的話 後面的事情就不作了
+      unless reply_image.nil?
+        # 傳送訊息到 line
+        response = reply_image_to_line(reply_image)
       
-      # 回應200
-      head :ok
+        # 回應200
+        head :ok
       
-      return
-    end
+        return
+      end
   
-    # 紀錄頻道
-    Channel.find_or_create_by(channel_id: channel_id)
+      # 紀錄頻道
+      Channel.find_or_create_by(channel_id: channel_id)
     
-    # 刪除學過的話
-    reply_text =  delete_learn(received_text)
+      # 刪除學過的話
+      reply_text =  delete_learn(received_text)
     
-    # 學說話
-    reply_text = learn(channel_id, received_text)
+      # 學說話
+      reply_text = learn(channel_id, received_text)
     
-    # 關鍵字回覆
-    reply_text = keyword_reply(channel_id, received_text) if reply_text.nil?
+      # 關鍵字回覆
+      reply_text = keyword_reply(channel_id, received_text) if reply_text.nil?
     
-    # 推齊
-    reply_text = echo2(channel_id, received_text) if reply_text.nil?
+      # 推齊
+      reply_text = echo2(channel_id, received_text) if reply_text.nil?
     
-    # 紀錄對話
-    save_to_received(channel_id, received_text)
-    save_to_reply(channel_id, reply_text)
+      # 紀錄對話
+      save_to_received(channel_id, received_text)
+      save_to_reply(channel_id, reply_text)
     
-    # 傳送訊息到 line
-    response = reply_to_line(reply_text)
+      # 傳送訊息到 line
+      response = reply_to_line(reply_text)
     
-    # 回應 200
-    head :ok
+      # 回應 200
+      head :ok
+      
+    end   
   end
   
   def get_temperature(received_text)
@@ -162,6 +167,10 @@ class KamigooController < ApplicationController
   def received_text
     message = params['events'][0]['message']
     message['text'] unless message.nil?
+  end
+  
+  def check_received_text
+    params['events'][0]['message']["type"]
   end
   
   # 學說話
@@ -295,4 +304,18 @@ class KamigooController < ApplicationController
   def random_number(message)
     "#{message}+#{Random.rand(0...4)}"
   end
+  
+  # 判斷來原是否為 line
+  def verify_header
+    channel_secret = ENV['CHANNEL_SECRET'] # Channel secret string
+    http_request_body = request.raw_post # Request body string
+    hash = OpenSSL::HMAC::digest(OpenSSL::Digest::SHA256.new, channel_secret, http_request_body)
+    signature = Base64.strict_encode64(hash)
+
+    # Compare X-Line-Signature request header string and the signature
+    if signature != request.headers["X-Line-Signature"]
+      redirect_to root_path
+    end
+  end
+  
 end

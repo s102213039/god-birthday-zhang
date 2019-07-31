@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_28_101020) do
+ActiveRecord::Schema.define(version: 2019_02_25_102941) do
+
+  create_table "candidates", force: :cascade do |t|
+    t.string "name"
+    t.string "party"
+    t.integer "age"
+    t.text "politics"
+    t.integer "votes", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "channels", force: :cascade do |t|
     t.string "channel_id"

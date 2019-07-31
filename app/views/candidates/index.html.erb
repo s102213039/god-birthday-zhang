@@ -1,0 +1,19 @@
+<h1>候選人列表</h1>
+
+<%= link_to "新增候選人", new_candidate_path %>
+
+<table class="table table-hover table-bordered table-sm table-striped">
+ <thead class="thead-light text-center">
+   <tr>
+     <th>投票</th>
+     <th>候選人姓名</th>
+     <th>政黨</th>
+     <th>政見</th>
+     <th>得票數</th>
+     <th>處理</th>
+   </tr>
+ </thead>
+ <tbody class="text-center">
+   <%= render @candidates %>
+ </tbody>
+</table>

@@ -1,0 +1,15 @@
+<%= simple_form_for(@candidate) do |f| %>
+  <%= f.input :name,label: "姓名" %>
+
+  <%= f.input :age,label: "年齡" %>
+
+  <%= f.input :party,label: "政黨" %>
+
+  <%= f.input :politics,label: "政見" %>
+
+  <%= f.submit %>
+
+<% end %>
+
+<br />
+<%= link_to "回候選人列表", candidates_path %>

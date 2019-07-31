@@ -1,7 +1,15 @@
 Rails.application.routes.draw do
+  get 'bmi',to: "bmi#index"
+  post 'bmi/result',to: "bmi#result"
   devise_for :users
   resources :keyword_mappings
   resources :push_messages, only: [:new, :create]
+  resources :rent_stuff
+  resources :candidates do
+    member do
+      post :vote
+    end
+  end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get '/', to: 'kamigoo#eat'
   get '/kamigoo/eat', to: 'kamigoo#eat'

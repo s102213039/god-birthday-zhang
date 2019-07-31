@@ -1,5 +1,5 @@
 class KeywordMappingsController < ApplicationController
-  before_action :authenticate_user!
+  # before_action :authenticate_user!
   before_action :set_keyword_mapping, only: [:show, :edit, :update, :destroy]
 
   # GET /keyword_mappings

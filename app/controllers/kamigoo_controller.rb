@@ -48,11 +48,11 @@ class KamigooController < ApplicationController
       reply_text = keyword_reply(channel_id, received_text) if reply_text.nil?
     
       # 推齊
-      reply_text = echo2(channel_id, received_text) if reply_text.nil?
+      # reply_text = echo2(channel_id, received_text) if reply_text.nil?
     
       # 紀錄對話
-      save_to_received(channel_id, received_text)
-      save_to_reply(channel_id, reply_text)
+      # save_to_received(channel_id, received_text)
+      # save_to_reply(channel_id, reply_text)
     
       # 傳送訊息到 line
       response = reply_to_line(reply_text)
@@ -64,7 +64,7 @@ class KamigooController < ApplicationController
   end
   
   def get_temperature(received_text)
-    return nil unless ["天氣","!天氣","三義天氣","三義氣溫","三義 天氣","天氣 三義"].include?(received_text)
+    return nil unless ["天氣","!天氣","三義天氣","三義氣溫","三義 天氣","天氣 三義","溫度","三義溫度"].include?(received_text)
     json_pretty(get_temperature_from_cwb)
   end
   
@@ -213,6 +213,17 @@ class KamigooController < ApplicationController
       name = ["邱彥瑜","張慶生","劉易儒","邱彥華","我們還是AA吧"].sample
       #Random.rand(0...4)
       message = "根據我專業的推斷這次請客輪到的是........#{name}!"
+      
+     # 樂透號碼
+    elsif ["號碼","!號碼","樂透號碼"].include?(received_text)
+      min_lottery_number = 1 
+      max_lottery_number = 49 
+      total_size = 6
+      
+      lottery_numbers = (min_lottery_number..max_lottery_number).to_a.sample(total_size)
+      
+      message = "#{lottery_numbers.sort.join(" ")}"
+      
     else
       message = KeywordMapping.where(channel_id: channel_id, keyword: received_text).last&.message
     end

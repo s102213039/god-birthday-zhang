@@ -1,24 +1,6 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+簡單的LINE聊天機器人，參考自卡米狗大大在iT邦幫忙發的系列文章:
+https://ithelp.ithome.com.tw/articles/10192259
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+感謝大神，讚嘆大神！
